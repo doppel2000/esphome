@@ -24,7 +24,7 @@ void MPU6050Component::setup() {
   ESP_LOGCONFIG(TAG, "Setting up MPU6050...");
   uint8_t who_am_i;
   if (!this->read_byte(MPU6050_REGISTER_WHO_AM_I, &who_am_i) || who_am_i != 0x68) {
-    ESP_LOGD("custom", "The value of register WHO_AM_I is: %f", who_am_i);
+    ESP_LOGD("custom", "The value of register WHO_AM_I is: 0x%02X", who_am_i);
     //this->mark_failed();
     return;
   }
