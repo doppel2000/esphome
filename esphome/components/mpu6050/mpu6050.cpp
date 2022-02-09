@@ -19,17 +19,15 @@ const float MPU6050_RANGE_PER_DIGIT_2G = 0.000061f;
 const uint8_t MPU6050_BIT_SLEEP_ENABLED = 6;
 const uint8_t MPU6050_BIT_TEMPERATURE_DISABLED = 3;
 const float GRAVITY_EARTH = 9.80665f;
-
-uint8_t who_am_i;
   
 void MPU6050Component::setup() {
   ESP_LOGCONFIG(TAG, "Setting up MPU6050...");
-  
-  if (!this->read_byte(MPU6050_REGISTER_WHO_AM_I, &who_am_i) || who_am_i != 0x68) {
-    ESP_LOGV(TAG, "The value of register WHO_AM_I is: 0x%02X", who_am_i);
-    //this->mark_failed();
+  uint8_t who_am_i;
+  if (!this->read_byte(MPU6050_REGISTER_WHO_AM_I, &who_am_i) || (who_am_i != 0x68 && who_am_i != 0x71) ) {
+    this->mark_failed();
     return;
   }
+  ESP_LOGV(TAG, "  The value of register WHO_AM_I is: 0x%02X", who_am_i);
 
   ESP_LOGV(TAG, "  Setting up Power Management...");
   // Setup power management
@@ -119,13 +117,12 @@ void MPU6050Component::update() {
   float gyro_y = data[5] * MPU6050_SCALE_DPS_PER_DIGIT_2000;
   float gyro_z = data[6] * MPU6050_SCALE_DPS_PER_DIGIT_2000;
 
-  ESP_LOGD(TAG, "The value of register WHO_AM_I is: 0x%02X", who_am_i);
   ESP_LOGD(TAG,
            "raw accel={x=%hd, y=%hd, z=%hd}, "
            "raw gyro={x=%hd, y=%hd, z=%hd}, raw temp=%hd",
            data[0], data[1], data[2], data[4], data[5], data[6], data[3]);
 
-  ESP_LOGD(TAG,
+  /*ESP_LOGD(TAG,
            "Got accel={x=%.3f m/s², y=%.3f m/s², z=%.3f m/s²}, "
            "gyro={x=%.3f °/s, y=%.3f °/s, z=%.3f °/s}, temp=%.3f°C",
            accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z, temperature);
@@ -145,7 +142,7 @@ void MPU6050Component::update() {
   if (this->gyro_y_sensor_ != nullptr)
     this->gyro_y_sensor_->publish_state(gyro_y);
   if (this->gyro_z_sensor_ != nullptr)
-    this->gyro_z_sensor_->publish_state(gyro_z);
+    this->gyro_z_sensor_->publish_state(gyro_z);*/
 
   this->status_clear_warning();
 }
