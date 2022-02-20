@@ -15,7 +15,7 @@ const uint8_t MPU6050_CLOCK_SOURCE_X_GYRO = 0b001;
 const uint8_t MPU6050_SCALE_2000_DPS = 0b11;
 const float MPU6050_SCALE_DPS_PER_DIGIT_2000 = 0.060975f;
 const uint8_t MPU6050_RANGE_2G = 0b00;
-const float MPU6050_RANGE_PER_DIGIT_2G = 0.000061f;
+const float MPU6050_RANGE_PER_DIGIT_2G = 0.00006049f;
 const uint8_t MPU6050_BIT_SLEEP_ENABLED = 6;
 const uint8_t MPU6050_BIT_TEMPERATURE_DISABLED = 3;
 const float GRAVITY_EARTH = 9.80665f;
@@ -107,25 +107,38 @@ void MPU6050Component::update() {
   }
   auto *data = reinterpret_cast<int16_t *>(raw_data);
 
-  float accel_x = data[0] * MPU6050_RANGE_PER_DIGIT_2G * GRAVITY_EARTH;
-  float accel_y = data[1] * MPU6050_RANGE_PER_DIGIT_2G * GRAVITY_EARTH;
-  float accel_z = (data[2] + 3130) * MPU6050_RANGE_PER_DIGIT_2G * GRAVITY_EARTH;
+  
+  //float accel_x = data[0] * MPU6050_RANGE_PER_DIGIT_2G * GRAVITY_EARTH;
+  //float accel_y = data[1] * MPU6050_RANGE_PER_DIGIT_2G * GRAVITY_EARTH;
+  
+  data[2] = data[2] + 3315;
+  float accel_z = data[2] * MPU6050_RANGE_PER_DIGIT_2G * GRAVITY_EARTH;
+  float tilt_z =  data[2] / 16531.0f;
+  
+  if(tilt_z>1.0f) {
+    tilt_z = 2.0f-tilt_z;
+  }
+  else if(tilt_z<-1.0f) {
+    tilt_z = 2.0f+tilt_z;
+  }
+  
+  tilt_z = asin(tilt_z) * 57.2957795f;
 
-  float temperature = data[3] / 340.0f + 36.53f;
+  //float temperature = data[3] / 340.0f + 36.53f;
 
-  float gyro_x = data[4] * MPU6050_SCALE_DPS_PER_DIGIT_2000;
-  float gyro_y = data[5] * MPU6050_SCALE_DPS_PER_DIGIT_2000;
-  float gyro_z = data[6] * MPU6050_SCALE_DPS_PER_DIGIT_2000;
-
-  //ESP_LOGD(TAG,
-  //         "accel z;%.10f",
-  //         accel_z);
+  //float gyro_x = data[4] * MPU6050_SCALE_DPS_PER_DIGIT_2000;
+  //float gyro_y = data[5] * MPU6050_SCALE_DPS_PER_DIGIT_2000;
+  //float gyro_z = data[6] * MPU6050_SCALE_DPS_PER_DIGIT_2000;
 
   ESP_LOGD(TAG,
+           "accel z: %.3f, tilt angle: %.3f",
+           accel_z, tilt_z);
+
+  /*ESP_LOGD(TAG,
            "%d;%d;%d",
            data[0], data[1], data[2]);
 
-  /*ESP_LOGD(TAG,
+  ESP_LOGD(TAG,
            "raw_data accel={x=%u, y=%u, z=%u}, "
            "raw_gyro={x=%u, y=%u, z=%u}, raw temp=%u",
            raw_data[0], raw_data[1], raw_data[2], raw_data[4], raw_data[5], raw_data[6], raw_data[3]);
