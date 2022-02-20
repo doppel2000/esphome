@@ -146,11 +146,11 @@ void MPU6050Component::update() {
   ESP_LOGD(TAG,
            "Got accel={x=%.3f m/s², y=%.3f m/s², z=%.3f m/s²}, "
            "gyro={x=%.3f °/s, y=%.3f °/s, z=%.3f °/s}, temp=%.3f°C",
-           accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z, temperature);
+           accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z, temperature);*/
 
   if (this->accel_x_sensor_ != nullptr)
-    this->accel_x_sensor_->publish_state(accel_x);
-  if (this->accel_y_sensor_ != nullptr)
+    this->accel_x_sensor_->publish_state(tilt_z);
+  /*if (this->accel_y_sensor_ != nullptr)
     this->accel_y_sensor_->publish_state(accel_y);
   if (this->accel_z_sensor_ != nullptr)
     this->accel_z_sensor_->publish_state(accel_z);
