@@ -123,7 +123,7 @@ void MPU6050Component::update() {
 
   ESP_LOGD(TAG,
            "%d;%d;%d",
-           data[0], data[1], data[2];
+           data[0], data[1], data[2]);
 
   /*ESP_LOGD(TAG,
            "raw_data accel={x=%u, y=%u, z=%u}, "
