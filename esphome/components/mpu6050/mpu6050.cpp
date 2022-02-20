@@ -118,9 +118,14 @@ void MPU6050Component::update() {
   float gyro_z = data[6] * MPU6050_SCALE_DPS_PER_DIGIT_2000;
 
   ESP_LOGD(TAG,
-           "raw accel={x=%hd, y=%hd, z=%hd}, "
-           "raw gyro={x=%hd, y=%hd, z=%hd}, raw temp=%hd",
+           "raw accel={x=%d, y=%d, z=%d}, "
+           "raw gyro={x=%d, y=%d, z=%d}, raw temp=%d",
            data[0], data[1], data[2], data[4], data[5], data[6], data[3]);
+
+  ESP_LOGD(TAG,
+           "raw_data accel={x=%u, y=%u, z=%u}, "
+           "raw_gyro={x=%u, y=%u, z=%u}, raw temp=%u",
+           raw_data[0], raw_data[1], raw_data[2], raw_data[4], raw_data[5], raw_data[6], raw_data[3]);
 
   /*ESP_LOGD(TAG,
            "Got accel={x=%.3f m/s², y=%.3f m/s², z=%.3f m/s²}, "
